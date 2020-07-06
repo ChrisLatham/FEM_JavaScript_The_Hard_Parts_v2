@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Test</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/highlight/dracula.min.css" />
+  </head>
+  <body class="bg-dark text-light">
+    <div class="container">
+      <h1>Closures, Scope, and Execution Context</h1>
+      <hr />
+      <p>
+        The executed outputs for each of the below code blocks can be viewed in
+        the console.
+      </p>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 1</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>createFunction</code> that creates and
+            returns a function. When that created function is called, it should
+            print "hello". When you think you completed createFunction,
+            un-comment out those lines in the code and run it to see if it
+            works.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function createFunction() {
+  return function () {
+    console.log("hello");
+  };
+}
+
+const function1 = createFunction();
+function1(); // => should console.log('hello');
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 2</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>createFunctionPrinter</code> that accepts
+            one input and returns a function. When that created function is
+            called, it should print out the input that was used when the
+            function was created.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function createFunctionPrinter(input) {
+  return () => console.log(input);
+}
+
+const printSample = createFunctionPrinter("sample");
+printSample(); // => should console.log('sample');
+const printHello = createFunctionPrinter("hello");
+printHello(); // => should console.log('hello');
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 3</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Examine the code for the <code>outer</code> function. Notice that we
+            are returning a function and that function is using variables that
+            are outside of its scope.<br />
+            Uncomment those lines of code. Try to deduce the output before
+            executing. Now we are going to create a function
+            <code>addByX</code> that returns a function that will add an input
+            by <code>x</code>.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function outer() {
+  let counter = 0;
+  function incrementCounter() {
+    counter++;
+    console.log("counter", counter);
+  }
+  return incrementCounter;
+}
+
+const willCounter = outer();
+const jasCounter = outer();
+willCounter(); // 'counter' 1
+willCounter(); // 'counter' 2
+willCounter(); // 'counter' 3
+jasCounter(); // 'counter' 1
+willCounter(); // 'counter' 4
+</code></pre>
+          </figure>
+          <figure>
+            <pre><code>function addByX(x) {
+  return (input) => input + x;
+}
+
+const addByTwo = addByX(2);
+addByTwo(1); // => should return 3
+addByTwo(2); // => should return 4
+addByTwo(3); // => should return 5
+
+const addByThree = addByX(3);
+addByThree(1); // => should return 4
+addByThree(2); // => should return 5
+
+const addByFour = addByX(4);
+addByFour(4); // => should return 8
+addByFour(5); // => should return 9
+          </code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 4</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Write a function <code>once</code> that accepts a callback as input
+            and returns a function. When the returned function is called the
+            first time, it should call the callback and return that output. If
+            it is called any additional times, instead of calling the callback
+            again it will simply return the output value from the first time it
+            was called.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function once(func) {
+  let count = 0;
+  let thisNum;
+  return function (num) {
+    if (count === 0) {
+      thisNum = num;
+      count++;
+    }
+    return func(thisNum);
+  };
+}
+
+const onceFunc = once(addByTwo);
+console.log(onceFunc(4)); // => should log 6
+console.log(onceFunc(10)); // => should log 6
+console.log(onceFunc(9001)); // => should log 6
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 5</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Write a function <code>after</code> that takes the number of times
+            the callback needs to be called before being executed as the first
+            parameter and the callback as the second parameter.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function after(count, func) {
+  let logCount = 0;
+  return function () {
+    logCount++;
+    if (logCount === count) {
+      func();
+    }
+  };
+}
+
+const called = function () {
+  console.log("hello");
+};
+const afterCalled = after(3, called);
+afterCalled(); // => nothing is printed
+afterCalled(); // => nothing is printed
+afterCalled(); // => 'hello' is printed
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 6</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Write a function <code>delay</code> that accepts a callback as the
+            first parameter and the wait in milliseconds before allowing the
+            callback to be invoked as the second parameter. Any additional
+            arguments after wait are provided to func when it is invoked. HINT:
+            research setTimeout();
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function delay(func, wait, ...args) {
+  setTimeout(func, wait, ...args);
+}
+delay((...args) => console.log(...args), 5000, "WHAT?!", "WOOHOO!");
+
+
+
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 7</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Write a function <code>rollCall</code> that accepts an array of
+            names and returns a function. The first time the returned function
+            is invoked, it should log the first name to the console. The second
+            time it is invoked, it should log the second name to the console,
+            and so on, until all names have been called. Once all names have
+            been called, it should log 'Everyone accounted for'.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function rollCall(names) {
+  let counter = 0;
+  return function () {
+    if (counter < names.length) {
+      console.log(names[counter]);
+    } else {
+      console.log("Everyone accounted for");
+    }
+    counter++;
+  };
+}
+
+const rollCaller = rollCall(["Victoria", "Juan", "Ruth"]);
+rollCaller(); // => should log 'Victoria'
+rollCaller(); // => should log 'Juan'
+rollCaller(); // => should log 'Ruth'
+rollCaller(); // => should log 'Everyone accounted for'
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 8</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>saveOutput</code> that accepts a function
+            (that will accept one argument), and a string (that will act as a
+            password). <code>saveOutput</code> will then return a function that
+            behaves exactly like the passed-in function, except for when the
+            password string is passed in as an argument. When this happens, the
+            returned function will return an object with all previously
+            passed-in arguments as keys, and the corresponding outputs as
+            values.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function saveOutput(func, magicWord) {
+  const logObj = {};
+  return function (input) {
+    if (input === magicWord) {
+      return logObj;
+    } else {
+      let result = func(input);
+      logObj[`${input}`] = result;
+      return result;
+    }
+  };
+}
+
+const multiplyBy2 = function (num) {
+  return num * 2;
+};
+const multBy2AndLog = saveOutput(multiplyBy2, "boo");
+console.log(multBy2AndLog(2)); // => should log 4
+console.log(multBy2AndLog(9)); // => should log 18
+console.log(multBy2AndLog("boo")); // => should log { 2: 4, 9: 18 }
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 9</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>cycleIterator</code> that accepts an array,
+            and returns a function. The returned function will accept zero
+            arguments. When first invoked, the returned function will return the
+            first element of the array. When invoked a second time, the returned
+            function will return the second element of the array, and so forth.
+            After returning the last element of the array, the next invocation
+            will return the first element of the array again, and continue on
+            with the second after that, and so forth.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function cycleIterator(array) {
+  let iterator = 0;
+  return function () {
+    iterator === array.length ? (iterator = 1) : iterator++;
+    return array[iterator - 1];
+  };
+}
+
+const threeDayWeekend = ["Fri", "Sat", "Sun"];
+const getDay = cycleIterator(threeDayWeekend);
+console.log(getDay()); // => should log 'Fri'
+console.log(getDay()); // => should log 'Sat'
+console.log(getDay()); // => should log 'Sun'
+console.log(getDay()); // => should log 'Fri'
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 10</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>defineFirstArg</code> that accepts a
+            function and an argument. Also, the function being passed in will
+            accept at least one argument. <code>defineFirstArg</code> will
+            return a new function that invokes the passed-in function with the
+            passed-in argument as the passed-in function's first argument.
+            Additional arguments needed by the passed-in function will need to
+            be passed into the returned function.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function defineFirstArg(func, arg) {
+  return (...args) => {
+    return func(arg, args);
+  };
+}
+
+const subtract = function (big, small) {
+  return big - small;
+};
+const subFrom20 = defineFirstArg(subtract, 20);
+console.log(subFrom20(5)); // => should log 15
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 11</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>dateStamp</code> that accepts a function and
+            returns a function. The returned function will accept however many
+            arguments the passed-in function accepts, and return an object with
+            a <code>date</code> key that contains a timestamp with the time of
+            invocation, and an <code>output</code> key that contains the result
+            from invoking the passed-in function. HINT: You may need to research
+            how to access information on Date objects.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function dateStamp(func) {
+  return function (input) {
+    let dateStamp = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
+    return { date: `${dateStamp}`, output: func(input) };
+  };
+}
+
+const stampedMultBy2 = dateStamp((n) => n * 2);
+console.log(stampedMultBy2(4));
+// => should log { date: (today's date), output: 8 }
+console.log(stampedMultBy2(6));
+// => should log { date: (today's date), output: 12 }
+
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 12</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Create a function <code>censor</code> that accepts no arguments.
+            <code>censor</code> will return a function that will accept either
+            two strings, or one string. When two strings are given, the returned
+            function will hold onto the two strings as a pair, for future use.
+            When one string is given, the returned function will return the same
+            string, except all instances of first strings (of saved pairs) will
+            be replaced with their corresponding second strings (of those saved
+            pairs).
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function censor() {
+  const swaps = [];
+  return function (...args) {
+    if (args.length === 2) {
+      swaps.push(args);
+    } else {
+      let newStr = args[0];
+      swaps.forEach(
+        (swap) => (newStr = newStr.replace(swap[0], swap[1]))
+      );
+      return newStr;
+    }
+  };
+}
+
+const changeScene = censor();
+changeScene("dogs", "cats");
+changeScene("quick", "slow");
+const str = "The quick, brown fox jumps over the lazy dogs.";
+console.log(changeScene(str));
+// => should log 'The slow, brown fox jumps over the lazy cats.'
+
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 13</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            There's no such thing as private properties on a JavaScript object!
+            But, maybe there are? Implement a function
+            <code>createSecretHolder(secret)</code> which accepts any value as
+            secret and returns an object with ONLY two methods.
+
+            <code>getSecret()</code> which returns the secret
+            <code>setSecret()</code> which sets the secret
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function createSecretHolder(secret) {
+  const secretObj = {};
+  secretObj.getSecret = () => {
+    console.log(`Get Secret: ${secret}`);
+    return secret;
+  };
+  secretObj.setSecret = (newSecret) => {
+    secret = newSecret;
+    console.log(`Set Secret: ${secret}`);
+  };
+  return secretObj;
+}
+
+obj = createSecretHolder(5);
+obj.getSecret(); // => returns 5
+obj.setSecret(2);
+obj.getSecret(); // => returns 2
+</code></pre>
+          </figure>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Challenge 14</h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            Write a function, <code>callTimes</code>, that returns a new
+            function. The new function should return the number of times it’s
+            been called.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function callTimes() {
+  let count = 1;
+  return function () {
+    return console.log(count++);
+  };
+}
+
+// /*** Uncomment these to check your work! ***/
+let myNewFunc1 = callTimes();
+let myNewFunc2 = callTimes();
+myNewFunc1(); // => 1
+myNewFunc1(); // => 2
+myNewFunc2(); // => 1
+myNewFunc2(); // => 2
+</code></pre>
+          </figure>
+        </div>
+      </div>
+
+      <!-- Challenge Block -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            <!-- Challenge ID -->
+            Challenge 15
+          </h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            <!-- Challenge Instructions -->
+            Create a function <code>russianRoulette</code> that accepts a number
+            (let us call it <code>n</code>), and returns a function. The
+            returned function will take no arguments, and will return the string
+            'click' the first <code>n - 1</code> number of times it is invoked.
+            On the very next invocation (the <code>nth</code>
+            invocation), the returned function will return the string 'bang'. On
+            every invocation after that, the returned function returns the
+            string 'reload to play again'.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <!-- Solution Code -->
+          <figure>
+            <pre><code>function russianRoulette(num) {
+  let runCount = 0;
+  return function () {
+    runCount++;
+    if (runCount < num) {
+      return "click";
+    } else if (runCount === num) {
+      return "bang";
+    } else {
+      return "reload to play again";
+    }
+  };
+}
+
+const play = russianRoulette(3);
+console.log(play()); // => should log 'click'
+console.log(play()); // => should log 'click'
+console.log(play()); // => should log 'bang'
+console.log(play()); // => should log 'reload to play again'
+console.log(play()); // => should log 'reload to play again'</code></pre>
+          </figure>
+        </div>
+      </div>
+      <!-- End Challenge Block -->
+
+      <!-- Challenge Block -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            <!-- Challenge ID -->
+            Challenge 16
+          </h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            <!-- Challenge Instructions -->
+            Create a function <code>average</code> that accepts no arguments,
+            and returns a function (that will accept either a number as its lone
+            argument, or no arguments at all). When the returned function is
+            invoked with a number, the output should be average of all the
+            numbers have ever been passed into that function (duplicate numbers
+            count just like any other number). When the returned function is
+            invoked with no arguments, the current average is outputted. If the
+            returned function is invoked with no arguments before any numbers
+            are passed in, then it should return 0.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function average() {
+  const numList = [];
+  return function (num = 0) {
+    if (num > 0) {
+      numList.push(num);
+    }
+    if (numList.length === 0) {
+      return 0;
+    } else {
+      let sumOfList = 0;
+      for (let i = 0; i < numList.length; i++) {
+        sumOfList += numList[i];
+      }
+      return sumOfList / numList.length;
+    }
+  };
+}
+
+const avgSoFar = average();
+console.log(avgSoFar()); // => should log 0
+console.log(avgSoFar(4)); // => should log 4
+console.log(avgSoFar(8)); // => should log 6
+console.log(avgSoFar()); // => should log 6
+console.log(avgSoFar(12)); // => should log 8
+console.log(avgSoFar()); // => should log 8</code></pre>
+          </figure>
+        </div>
+      </div>
+      <!-- End Challenge Block -->
+
+      <!-- Challenge Block -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            <!-- Challenge ID -->
+            Challenge 17
+          </h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            <!-- Challenge Instructions -->
+            Create a function <code>makeFuncTester</code> that accepts an array
+            (of two-element sub-arrays), and returns a function (that will
+            accept a callback). The returned function should return
+            <code>true</code> if the first elements (of each sub-array) being
+            passed into the callback all yield the corresponding second elements
+            (of the same sub-array). Otherwise, the returned function should
+            return <code>false</code>.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function makeFuncTester(arrOfTests) {
+  return function (callback) {
+    let count = 0;
+    for (let i = 0; i < arrOfTests.length; i++) {
+      if (callback(arrOfTests[i][0]) === arrOfTests[i][1]) {
+        count++;
+      }
+    }
+    return count === 3;
+  };
+}
+
+// /*** Uncomment these to check your work! ***/
+const capLastTestCases = [];
+capLastTestCases.push(["hello", "hellO"]);
+capLastTestCases.push(["goodbye", "goodbyE"]);
+capLastTestCases.push(["howdy", "howdY"]);
+const shouldCapitalizeLast = makeFuncTester(capLastTestCases);
+const capLastAttempt1 = (str) => str.toUpperCase();
+const capLastAttempt2 = (str) => str.slice(0, -1) + str.slice(-1).toUpperCase();
+console.log(shouldCapitalizeLast(capLastAttempt1)); // => should log false
+console.log(shouldCapitalizeLast(capLastAttempt2)); // => should log true</code></pre>
+          </figure>
+        </div>
+      </div>
+      <!-- End Challenge Block -->
+
+      <!-- Challenge Block -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            <!-- Challenge ID -->
+            Challenge 18
+          </h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <p>
+            <!-- Challenge Instructions -->
+            Create a function <code>makeHistory</code> that accepts a number
+            (which will serve as a limit), and returns a function (that will
+            accept a string). The returned function will save a history of the
+            most recent "limit" number of strings passed into the returned
+            function (one per invocation only). Every time a string is passed
+            into the function, the function should return that same string with
+            the word 'done' after it (separated by a space). However, if the
+            string 'undo' is passed into the function, then the function should
+            delete the last action saved in the history, and return that deleted
+            string with the word 'undone' after (separated by a space). If
+            'undo' is passed into the function and the function's history is
+            empty, then the function should return the string 'nothing to undo'.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function makeHistory(limit) {
+  let listOfStrings = [];
+  return function (str) {
+    if (str === "undo") {
+      if (listOfStrings.length === 0) {
+        return "nothing to undo";
+      } else {
+        let temp = listOfStrings[listOfStrings.length - 1];
+        listOfStrings.pop();
+        return `${temp} undone`;
+      }
+    } else {
+      if (listOfStrings.length === limit) {
+        listOfStrings.shift();
+      }
+      listOfStrings.push(str);
+      return `${str} done`;
+    }
+  };
+}
+
+/*** Uncomment these to check your work! ***/
+const myActions = makeHistory(2);
+console.log(myActions("jump")); // => should log 'jump done'
+console.log(myActions("undo")); // => should log 'jump undone'
+console.log(myActions("walk")); // => should log 'walk done'
+console.log(myActions("code")); // => should log 'code done'
+console.log(myActions("pose")); // => should log 'pose done'
+console.log(myActions("undo")); // => should log 'pose undone'
+console.log(myActions("undo")); // => should log 'code undone'
+console.log(myActions("undo")); // => should log 'nothing to undo'</code></pre>
+          </figure>
+        </div>
+      </div>
+      <!-- End Challenge Block -->
+
+      <!-- Challenge Block -->
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            <!-- Challenge ID -->
+            Challenge 19
+          </h3>
+        </div>
+        <div class="col-md-7">
+          <h3>Solution</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <!-- Challenge Instructions -->
+          <p>
+            <strong>
+              Inspect the commented out test cases carefully if you need help to
+              understand these instructions.
+            </strong>
+          </p>
+          Create a function <code>blackjack</code> that accepts an array (which
+          will contain numbers ranging from 1 through 11), and returns a DEALER
+          function. The DEALER function will take two arguments (both numbers),
+          and then return yet ANOTHER function, which we will call the PLAYER
+          function.
+          <p>
+            On the FIRST invocation of the PLAYER function, it will return the
+            sum of the two numbers passed into the DEALER function.
+          </p>
+          <p>
+            On the SECOND invocation of the PLAYER function, it will return
+            either:
+          </p>
+          <ol>
+            <li>
+              the first number in the array that was passed into
+              <code>blackjack</code> PLUS the sum of the two numbers passed in
+              as arguments into the DEALER function, IF that sum is 21 or below,
+              OR
+            </li>
+            <li>
+              the string 'bust' if that sum is over 21.
+            </li>
+          </ol>
+          <p>
+            If it is 'bust', then every invocation of the PLAYER function AFTER
+            THAT will return the string 'you are done!' (but unlike 'bust', the
+            'you are done!' output will NOT use a number in the array). If it is
+            NOT 'bust', then the next invocation of the PLAYER function will
+            return either:
+          </p>
+          <ol>
+            <li>
+              the most recent sum plus the next number in the array (a new sum)
+              if that new sum is 21 or less, OR
+            </li>
+            <li>
+              the string 'bust' if the new sum is over 21.
+            </li>
+          </ol>
+          <p>
+            And again, if it is 'bust', then every subsequent invocation of the
+            PLAYER function will return the string 'you are done!'. Otherwise,
+            it can continue on to give the next sum with the next number in the
+            array, and so forth.
+          </p>
+          <p>
+            You may assume that the given array is long enough to give a 'bust'
+            before running out of numbers.
+          </p>
+          <p>
+            BONUS: Implement <code>blackjack</code> so the DEALER function can
+            return more PLAYER functions that will each continue to take the
+            next number in the array after the previous PLAYER function left
+            off. You will just need to make sure the array has enough numbers
+            for all the PLAYER functions.
+          </p>
+        </div>
+        <div class="col-md-7">
+          <figure>
+            <pre><code>function blackjack(array) {
+  let deckLocation = 0;
+  return function dealer(num1, num2) {
+    let playerTurn = 0;
+    let playerState = "PLAYING";
+    let playerScore = 0;
+    return function player() {
+      playerTurn++;
+      if (playerState === "BUST") {
+        return "you are done!";
+      }
+      if (playerTurn === 1) {
+        playerScore = num1 + num2;
+        return playerScore;
+      } else {
+        deckLocation++;
+        if (deckLocation === array.length - 1) {
+          deckLocation = 1;
+        }
+        playerScore += array[deckLocation - 1];
+        if (playerScore <= 21) {
+          return playerScore;
+        } else {
+          playerState = "BUST";
+          return "bust";
+        }
+      }
+    };
+  };
+}
+
+// /*** DEALER ***/
+const deal = blackjack([2,6,1,7,11,4,6,3,9,8,9,3,10,4,5,3,7,4,9,6,10,11,]);
+
+console.log("\n*** PLAYER 1 ***");
+const i_like_to_live_dangerously = deal(4, 5);
+console.log(i_like_to_live_dangerously()); // => should log 9
+console.log(i_like_to_live_dangerously()); // => should log 11
+console.log(i_like_to_live_dangerously()); // => should log 17
+console.log(i_like_to_live_dangerously()); // => should log 18
+console.log(i_like_to_live_dangerously()); // => should log 'bust'
+console.log(i_like_to_live_dangerously()); // => should log 'you are done!'
+console.log(i_like_to_live_dangerously()); // => should log 'you are done!'
+
+console.log("\n*** PLAYER 2 ***");
+const i_TOO_like_to_live_dangerously = deal(2, 2);
+console.log(i_TOO_like_to_live_dangerously()); // => should log 4
+console.log(i_TOO_like_to_live_dangerously()); // => should log 15
+console.log(i_TOO_like_to_live_dangerously()); // => should log 19
+console.log(i_TOO_like_to_live_dangerously()); // => should log 'bust'
+console.log(i_TOO_like_to_live_dangerously()); // => should log 'you are done!
+console.log(i_TOO_like_to_live_dangerously()); // => should log 'you are done!
+
+console.log("\n*** PLAYER 3 ***");
+const i_ALSO_like_to_live_dangerously = deal(3, 7);
+console.log(i_ALSO_like_to_live_dangerously()); // => should log 10
+console.log(i_ALSO_like_to_live_dangerously()); // => should log 13
+console.log(i_ALSO_like_to_live_dangerously()); // => should log 'bust'
+console.log(i_ALSO_like_to_live_dangerously()); // => should log 'you are done!
+console.log(i_ALSO_like_to_live_dangerously()); // => should log 'you are done!</code></pre>
+          </figure>
+        </div>
+      </div>
+      <!-- End Challenge Block -->
+    </div>
+    <script src="assets/jquery/jquery-3.5.1.slim.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/highlight/highlight.min.js"></script>
+    <script src="js/closures.js"></script>
+  </body>
+</html>
