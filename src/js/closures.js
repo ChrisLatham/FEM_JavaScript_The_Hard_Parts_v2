@@ -355,8 +355,8 @@ function makeHistory(limit) {
 
 /*** Uncomment these to check your work! ***/
 const myActions = makeHistory(2);
-myActions("jump") |> console.log; // => should log 'jump done'
-myActions("undo") |> console.log; // => should log 'jump undone'
+console.log(myActions("jump")); // => should log 'jump done'
+console.log(myActions("undo")); // => should log 'jump undone'
 console.log(myActions("walk")); // => should log 'walk done'
 console.log(myActions("code")); // => should log 'code done'
 console.log(myActions("pose")); // => should log 'pose done'

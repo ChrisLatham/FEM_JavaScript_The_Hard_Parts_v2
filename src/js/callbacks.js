@@ -20,7 +20,7 @@ console.log(addS("pizza"));
 console.log(addS("bagel"));
 
 console.log("\nCHALLENGE 3");
-function map(array, callback) {
+function myMap(array, callback) {
   const newArray = [];
   for (let i = 0; i < array.length; i++) {
     newArray.push(callback(array[i]));
@@ -28,7 +28,7 @@ function map(array, callback) {
   return newArray;
 }
 
-console.log(map([1, 2, 3], addTwo));
+console.log(myMap([1, 2, 3], addTwo));
 
 console.log("\nCHALLENGE 4");
 function forEach(array, callback) {
@@ -61,25 +61,14 @@ function reduce(array, callback, initialValue) {
 console.log(reduce([1, 3, 4], (a, b) => a + b - 1, 0));
 
 console.log("\nCHALLENGE 7");
-function intersection(arrays) {
-  let result = [];
-  let numberOfArrays = arguments.length;
-  for (let i = 0; i < arrays.length; i++) {
-    let item = arrays[i];
-    if (result.includes(item)) {
-      continue;
-    }
-    for (let j = 1; j < numberOfArrays; j++) {
-      let array = arguments[j];
-      console.log(array, item);
-      if (array.includes(item)) {
-        if (!result.includes(item)) {
-          result.push(item);
-        }
-      }
-    }
-  }
-  return result;
+function intersection(...arrays) {
+  return arrays.reduce((current, next) => {
+    const filtered = [];
+    next.forEach((item) => {
+      if (current.includes(item)) filtered.push(item);
+    });
+    return filtered;
+  });
 }
 
 console.log(
@@ -88,16 +77,39 @@ console.log(
 // should log: [5, 15]
 
 // Challenge 8
-function union(arrays) {}
+function unify(...arrays) {
+  return arrays.reduce((current, next) => {
+    const filtered = current;
+    next.forEach((item) => {
+      if (!filtered.includes(item)) filtered.push(item);
+    });
+    return filtered;
+  });
+}
 
-// console.log(union([5, 10, 15], [15, 88, 1, 5, 7], [100, 15, 10, 1, 5]));
+console.log(unify([5, 10, 15], [15, 88, 1, 5, 7], [100, 15, 10, 1, 5]));
 // should log: [5, 10, 15, 88, 1, 7, 100]
 
 // Challenge 9
-function objOfMatches(array1, array2, callback) {}
+function objOfMatches(array1, array2, callback) {
+  let result = {};
+  array1.forEach((item) => {
+    if (array2.includes(callback(item))) {
+      result[item] = array2[array2.indexOf(callback(item))];
+    }
+  });
+  return result;
+}
 
-// console.log(objOfMatches(['hi', 'howdy', 'bye', 'later', 'hello'], ['HI', 'Howdy', 'BYE', 'LATER', 'hello'], function(str) { return str.toUpperCase(); }));
-// should log: { hi: 'HI', bye: 'BYE', later: 'LATER' }
+console.log(
+  objOfMatches(
+    ["hi", "howdy", "bye", "later", "hello"],
+    ["HI", "Howdy", "BYE", "LATER", "hello"],
+    function (str) {
+      return str.toUpperCase();
+    }
+  )
+); // should log: { hi: 'HI', bye: 'BYE', later: 'LATER' }
 
 // Challenge 10
 function multiMap(arrVals, arrCallbacks) {}
